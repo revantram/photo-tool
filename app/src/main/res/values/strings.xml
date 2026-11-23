@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Photo Tool</string>
+    <string name="share_action_compress">Compress KB</string>
+    <string name="share_action_id_merge">ID Card Merge</string>
+    <string name="share_action_pdf">Convert to PDF</string>
+    <string name="share_action_crop">Crop &amp; Resize</string>
+    <string name="share_action_ocr">OCR Extract Text</string>
+</resources>
