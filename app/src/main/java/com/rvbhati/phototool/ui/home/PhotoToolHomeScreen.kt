@@ -150,35 +150,35 @@ fun PhotoToolHomeScreen(
         }
     ) { innerPadding ->
         LazyVerticalGrid(
-            columns = GridCells.Fixed(3), // 3x3 layout
+            columns = GridCells.Fixed(2), // 2x2 layout as requested
             contentPadding = PaddingValues(
                 top = innerPadding.calculateTopPadding() + 8.dp,
-                bottom = 24.dp,
-                start = 10.dp,
-                end = 10.dp
+                bottom = 28.dp,
+                start = 14.dp,
+                end = 14.dp
             ),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxSize()
         ) {
-            // 3x3 Grid Tool Cards (Photo & Camera banner removed completely)
+            // 2x2 Grid Tool Cards (Photo & Camera banner removed, photo crop at last)
             items(quickTools) { tool ->
                 Surface(
-                    shape = RoundedCornerShape(14.dp),
+                    shape = RoundedCornerShape(16.dp),
                     color = cardColor,
                     border = BorderStroke(1.dp, borderColor),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(14.dp))
+                        .clip(RoundedCornerShape(16.dp))
                         .clickable { onToolClick(tool.id) }
                 ) {
                     Column(
-                        modifier = Modifier.padding(vertical = 14.dp, horizontal = 6.dp),
+                        modifier = Modifier.padding(vertical = 16.dp, horizontal = 10.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(38.dp)
+                                .size(44.dp)
                                 .clip(CircleShape)
                                 .background(tool.accentColor.copy(alpha = 0.16f)),
                             contentAlignment = Alignment.Center
@@ -187,13 +187,13 @@ fun PhotoToolHomeScreen(
                                 imageVector = tool.icon,
                                 contentDescription = tool.titleHindi,
                                 tint = tool.accentColor,
-                                modifier = Modifier.size(22.dp)
+                                modifier = Modifier.size(24.dp)
                             )
                         }
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
                             text = if (AppState.isHindi) tool.titleHindi else tool.titleEnglish,
-                            fontSize = 12.sp,
+                            fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             color = textPrimary,
                             maxLines = 1,
@@ -202,12 +202,12 @@ fun PhotoToolHomeScreen(
                         )
                         Text(
                             text = if (AppState.isHindi) tool.subtitleHindi else tool.subtitleEnglish,
-                            fontSize = 9.sp,
+                            fontSize = 11.sp,
                             color = textSecondary,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(top = 2.dp)
+                            modifier = Modifier.padding(top = 3.dp)
                         )
                     }
                 }

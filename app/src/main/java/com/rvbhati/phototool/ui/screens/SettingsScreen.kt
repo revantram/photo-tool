@@ -3,7 +3,6 @@ package com.rvbhati.phototool.ui.screens
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -34,12 +32,6 @@ import com.rvbhati.phototool.engine.UpdateInfo
 import kotlinx.coroutines.launch
 import java.io.File
 
-data class OtherDeveloperApp(
-    val name: String,
-    val description: String,
-    val githubUrl: String
-)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -57,46 +49,12 @@ fun SettingsScreen(
     val textPrimary = if (isDark) Color.White else Color(0xFF0F172A)
     val textSecondary = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B)
 
-    var showOtherApps by remember { mutableStateOf(false) }
     var isCheckingUpdate by remember { mutableStateOf(false) }
     var isDownloadingUpdate by remember { mutableStateOf(false) }
     var downloadProgress by remember { mutableFloatStateOf(0f) }
     var updateInfo by remember { mutableStateOf<UpdateInfo?>(null) }
     var downloadedApkFile by remember { mutableStateOf<File?>(null) }
     var freedCacheMb by remember { mutableStateOf<Double?>(null) }
-
-    val otherApps = listOf(
-        OtherDeveloperApp(
-            name = "RV Bhati Player",
-            description = if (isHi) "शक्तिशाली मीडिया प्लेयर व ऑडियो-वीडियो प्लेयर" else "Powerful media and video/audio player",
-            githubUrl = "https://github.com/revantram/rv-bhati-player"
-        ),
-        OtherDeveloperApp(
-            name = if (isHi) "मेरी तैयारी (Meri Taiyari)" else "Meri Taiyari Exam Prep",
-            description = if (isHi) "प्रतियोगी परीक्षा MCQ टेस्ट व अध्ययन ऐप" else "Competitive exam preparation and MCQ quiz app",
-            githubUrl = "https://github.com/revantram/meri-taiyari-mcq-prep"
-        ),
-        OtherDeveloperApp(
-            name = if (isHi) "युवा शक्ति ऐप (Yuva Shakti App)" else "Yuva Shakti App",
-            description = if (isHi) "भाटी परिवार कुचेरा आधिकारिक कम्युनिटी ऐप" else "Bhati Parivar Kuchera official community app",
-            githubUrl = "https://github.com/revantram/yuva-shakti-app"
-        ),
-        OtherDeveloperApp(
-            name = if (isHi) "हाजिरी ऐप (Hajiri App)" else "Hajiri Attendance App",
-            description = if (isHi) "iOS Liquid Glass UI • मोबाइल लॉगिन • सैलरी कैलकुलेटर" else "iOS Liquid Glass UI • Mobile Login • Salary Calculator",
-            githubUrl = "https://github.com/revantram/hajiri-app"
-        ),
-        OtherDeveloperApp(
-            name = "TV Launcher",
-            description = if (isHi) "Android TV व Fire TV Stick कस्टम लॉन्चर" else "Android TV & Fire TV Stick custom launcher",
-            githubUrl = "https://github.com/revantram/TV-launcher"
-        ),
-        OtherDeveloperApp(
-            name = if (isHi) "उत्कर्ष MCQ (Utkarsh MCQ)" else "Utkarsh MCQ App",
-            description = if (isHi) "MCQ क्विज़ व प्रश्नोत्तरी अभ्यास ऐप" else "MCQ quiz & mock test practice app",
-            githubUrl = "https://github.com/revantram/Utkarsh-"
-        )
-    )
 
     Scaffold(
         containerColor = bgColor,
@@ -303,7 +261,7 @@ fun SettingsScreen(
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    // APK Version Pill (pure version, build number removed)
+                    // APK Version Pill
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -426,245 +384,7 @@ fun SettingsScreen(
                 }
             }
 
-            // 2. डेवलपर के और दूसरे एप्लीकेशन Card
-            Surface(
-                shape = RoundedCornerShape(18.dp),
-                color = cardColor,
-                border = BorderStroke(1.dp, borderColor),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { showOtherApps = !showOtherApps }
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier
-                                    .size(38.dp)
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .background(Color(0xFF2563EB).copy(alpha = 0.2f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(Icons.Rounded.Widgets, contentDescription = null, tint = Color(0xFF60A5FA), modifier = Modifier.size(22.dp))
-                            }
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Column {
-                                Text(
-                                    text = if (isHi) "डेवलपर के और दूसरे एप्लीकेशन" else "Developer's Other Apps",
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = textPrimary
-                                )
-                                Text(
-                                    text = if (isHi) "रेवंतराम भाटी के अन्य ऐप्स देखें व 1-क्लिक में इंस्टॉल करें" else "Explore other apps by Revant Ram Bhati",
-                                    fontSize = 11.sp,
-                                    color = textSecondary
-                                )
-                            }
-                        }
-
-                        Surface(
-                            shape = RoundedCornerShape(14.dp),
-                            color = if (isDark) Color(0xFF1E293B) else Color(0xFFEFF6FF)
-                        ) {
-                            Text(
-                                text = "6+ ऐप्स >",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF2563EB),
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                            )
-                        }
-                    }
-
-                    AnimatedVisibility(visible = showOtherApps) {
-                        Column(
-                            modifier = Modifier.padding(top = 14.dp),
-                            verticalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            otherApps.forEach { app ->
-                                Surface(
-                                    shape = RoundedCornerShape(14.dp),
-                                    color = if (isDark) Color(0xFF181C24) else Color(0xFFF8FAFC),
-                                    border = BorderStroke(1.dp, borderColor),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(app.githubUrl))
-                                            context.startActivity(intent)
-                                        }
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(12.dp),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Column(modifier = Modifier.weight(1f)) {
-                                            Text(app.name, fontWeight = FontWeight.Bold, color = textPrimary, fontSize = 14.sp)
-                                            Text(app.description, color = textSecondary, fontSize = 11.sp, modifier = Modifier.padding(top = 2.dp))
-                                        }
-                                        Icon(
-                                            imageVector = Icons.AutoMirrored.Rounded.OpenInNew,
-                                            contentDescription = "Open",
-                                            tint = Color(0xFF38BDF8),
-                                            modifier = Modifier.size(18.dp)
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // 3. एडमिन कंट्रोल
-            Surface(
-                shape = RoundedCornerShape(18.dp),
-                color = cardColor,
-                border = BorderStroke(1.dp, borderColor),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        Toast.makeText(context, if (isHi) "एडमिन मोड सक्रिय: रेवंतराम भाटी" else "Admin Mode Active: Revant Ram Bhati", Toast.LENGTH_SHORT).show()
-                    }
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(38.dp)
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(Color(0xFFD97706).copy(alpha = 0.2f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(Icons.Rounded.AdminPanelSettings, contentDescription = null, tint = Color(0xFFF59E0B), modifier = Modifier.size(22.dp))
-                        }
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column {
-                            Text(if (isHi) "एडमिन कंट्रोल" else "Admin Control", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = textPrimary)
-                            Text(if (isHi) "एडमिन मोड सक्रिय • कंट्रोल सेंटर खोलें" else "Admin Mode Active • Control Center", fontSize = 11.sp, color = textSecondary)
-                        }
-                    }
-
-                    Surface(
-                        shape = RoundedCornerShape(14.dp),
-                        color = Color(0xFF14532D)
-                    ) {
-                        Text(
-                            text = if (isHi) "👑 सक्रिय >" else "👑 Active >",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF4ADE80),
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                        )
-                    }
-                }
-            }
-
-            // 4. ऐप शेयर करें
-            Surface(
-                shape = RoundedCornerShape(18.dp),
-                color = cardColor,
-                border = BorderStroke(1.dp, borderColor),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { InAppUpdateEngine.shareAppApk(context) }
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(38.dp)
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(Color(0xFFEA580C).copy(alpha = 0.2f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(Icons.Rounded.Send, contentDescription = null, tint = Color(0xFFFB923C), modifier = Modifier.size(20.dp))
-                        }
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column {
-                            Text(if (isHi) "ऐप शेयर करें" else "Share App APK", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = textPrimary)
-                            Text(if (isHi) "व्हाट्सएप पर सीधी ऐप (APK फाइल) भेजें" else "Share APK file directly on WhatsApp", fontSize = 11.sp, color = textSecondary)
-                        }
-                    }
-
-                    Surface(
-                        shape = RoundedCornerShape(14.dp),
-                        color = if (isDark) Color(0xFF431407) else Color(0xFFFFEDD5)
-                    ) {
-                        Text(
-                            text = if (isHi) "APK शेयर >" else "Share APK >",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFFFB923C),
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                        )
-                    }
-                }
-            }
-
-            // 5. व्हाट्सएप ग्रुप
-            Surface(
-                shape = RoundedCornerShape(18.dp),
-                color = cardColor,
-                border = BorderStroke(1.dp, borderColor),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/918696663615"))
-                        context.startActivity(intent)
-                    }
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(38.dp)
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(Color(0xFF16A34A).copy(alpha = 0.2f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(Icons.Rounded.Chat, contentDescription = null, tint = Color(0xFF4ADE80), modifier = Modifier.size(20.dp))
-                        }
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column {
-                            Text(if (isHi) "व्हाट्सएप ग्रुप" else "WhatsApp Group", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = textPrimary)
-                            Text(if (isHi) "भाटी परिवार आधिकारिक ग्रुप से जुड़ें" else "Join official Bhati Parivar group", fontSize = 11.sp, color = textSecondary)
-                        }
-                    }
-
-                    Surface(
-                        shape = RoundedCornerShape(14.dp),
-                        color = Color(0xFF14532D)
-                    ) {
-                        Text(
-                            text = if (isHi) "व्हाट्सएप >" else "WhatsApp >",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF4ADE80),
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                        )
-                    }
-                }
-            }
-
-            // 6. भाषा चयन (Language Toggle)
+            // 2. भाषा चयन (Language Toggle)
             Surface(
                 shape = RoundedCornerShape(18.dp),
                 color = cardColor,
@@ -721,7 +441,7 @@ fun SettingsScreen(
                 }
             }
 
-            // 7. Cache & Storage Cleaner
+            // 3. Cache & Storage Cleaner
             Surface(
                 shape = RoundedCornerShape(18.dp),
                 color = cardColor,
