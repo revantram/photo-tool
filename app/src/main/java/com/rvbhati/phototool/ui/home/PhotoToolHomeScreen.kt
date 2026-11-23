@@ -6,7 +6,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
@@ -53,6 +52,7 @@ fun PhotoToolHomeScreen(
     val textPrimary = if (isDark) Color.White else Color(0xFF0F172A)
     val textSecondary = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B)
 
+    // Crop & Resize placed at the end (last) as requested
     val quickTools = listOf(
         QuickToolItem("id_merger", "आईडी कार्ड", "ID Merger", "आगे + पीछे", "Front + Back", Icons.Rounded.Badge, Color(0xFF38BDF8)),
         QuickToolItem("kb_compress", "केबी कम्प्रेस", "KB Compress", "मनचाही साइज", "Exact Target", Icons.Rounded.Compress, Color(0xFF4ADE80)),
@@ -60,7 +60,6 @@ fun PhotoToolHomeScreen(
         QuickToolItem("photo_sign", "फोटो + साइन", "Photo + Sign", "परीक्षा फॉर्म", "Exam Joiner", Icons.Rounded.Portrait, Color(0xFFFB923C)),
         QuickToolItem("img_to_pdf", "फोटो ↔ PDF", "Image ↔ PDF", "मर्ज व बनाएं", "Merge & Read", Icons.Rounded.PictureAsPdf, Color(0xFFF87171)),
         QuickToolItem("ocr_text", "टेक्स्ट निकालें", "OCR Extract", "फोटो से लिखावट", "Hindi & Eng", Icons.Rounded.DocumentScanner, Color(0xFFA78BFA)),
-        QuickToolItem("crop_resize", "क्रॉप व साइज", "Crop & Resize", "काटें व बदलें", "Px & Ratios", Icons.Rounded.Crop, Color(0xFF2DD4BF)),
         QuickToolItem("adjust_filters", "रंग व रोशनी", "Color & Light", "चमक व कंट्रास्ट", "Adjust Tone", Icons.Rounded.Tune, Color(0xFFF59E0B)),
         QuickToolItem("bg_remove", "प्राइवेसी ब्लर", "Privacy Blur", "छुपाएं व ब्लर", "Blur & Hide", Icons.Rounded.AutoFixHigh, Color(0xFFFACC15)),
         QuickToolItem("passport_a4", "पासपोर्ट शीट", "Passport A4", "ए4 प्रिंटेबल", "A4 / 4x6 Copies", Icons.Rounded.GridView, Color(0xFF60A5FA)),
@@ -68,7 +67,8 @@ fun PhotoToolHomeScreen(
         QuickToolItem("batch_edit", "एक साथ कई", "Batch Edit", "बैच कम्प्रेस", "Multi-Photo", Icons.Rounded.Layers, Color(0xFF34D399)),
         QuickToolItem("qr_tool", "क्यूआर कोड", "QR Tool", "स्कैन व बनाएं", "Scan & Make", Icons.Rounded.QrCodeScanner, Color(0xFFE879F9)),
         QuickToolItem("exif_zip", "डाटा हटाएं", "EXIF Clean", "प्राइवेसी सुरक्षा", "Strip Exif", Icons.Rounded.FolderZip, Color(0xFF94A3B8)),
-        QuickToolItem("zip_pack", "ज़िप बनाएं", "ZIP Creator", "फाइल बंडल", "Pack Photos", Icons.Rounded.Archive, Color(0xFF38BDF8))
+        QuickToolItem("zip_pack", "ज़िप बनाएं", "ZIP Creator", "फाइल बंडल", "Pack Photos", Icons.Rounded.Archive, Color(0xFF38BDF8)),
+        QuickToolItem("crop_resize", "फोटो क्रॉप", "Photo Crop", "काटें व साइज", "Crop & Resize", Icons.Rounded.Crop, Color(0xFF2DD4BF))
     )
 
     Scaffold(
@@ -152,7 +152,7 @@ fun PhotoToolHomeScreen(
         LazyVerticalGrid(
             columns = GridCells.Fixed(3), // 3x3 layout
             contentPadding = PaddingValues(
-                top = innerPadding.calculateTopPadding() + 6.dp,
+                top = innerPadding.calculateTopPadding() + 8.dp,
                 bottom = 24.dp,
                 start = 10.dp,
                 end = 10.dp
@@ -161,88 +161,7 @@ fun PhotoToolHomeScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxSize()
         ) {
-            // Hero Banner: Select Photo & Camera
-            item(span = { GridItemSpan(3) }) {
-                Surface(
-                    shape = RoundedCornerShape(20.dp),
-                    color = cardColor,
-                    border = BorderStroke(1.dp, borderColor),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .background(
-                                Brush.verticalGradient(
-                                    listOf(
-                                        if (isDark) Color(0xFF1E293B).copy(alpha = 0.65f) else Color(0xFFE2E8F0).copy(alpha = 0.6f),
-                                        cardColor
-                                    )
-                                )
-                            )
-                            .padding(14.dp)
-                    ) {
-                        Text(
-                            text = AppState.t("तुरंत फोटो एडिट करें", "Start Editing Instantly"),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = textPrimary
-                        )
-                        Text(
-                            text = AppState.t("क्रॉप, केबी कम्प्रेस, आईडी कार्ड, पीडीएफ व ओसीआर — 100% ऑफलाइन", "Crop, Compress KB, ID Merge, PDF & OCR — 100% Offline"),
-                            fontSize = 11.sp,
-                            color = textSecondary,
-                            modifier = Modifier.padding(top = 2.dp, bottom = 12.dp)
-                        )
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Button(
-                                onClick = onSelectGallery,
-                                shape = RoundedCornerShape(12.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(0xFF2563EB)
-                                ),
-                                modifier = Modifier
-                                    .weight(1.3f)
-                                    .height(46.dp)
-                            ) {
-                                Icon(Icons.Rounded.PhotoLibrary, contentDescription = null, modifier = Modifier.size(18.dp))
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(AppState.t("फोटो चुनें", "Select Photo"), fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                            }
-                            OutlinedButton(
-                                onClick = onOpenCamera,
-                                shape = RoundedCornerShape(12.dp),
-                                border = BorderStroke(1.dp, borderColor),
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = textPrimary
-                                ),
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(46.dp)
-                            ) {
-                                Icon(Icons.Rounded.CameraAlt, contentDescription = null, modifier = Modifier.size(18.dp))
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(AppState.t("कैमरा", "Camera"), fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Section Title
-            item(span = { GridItemSpan(3) }) {
-                Text(
-                    text = AppState.t("सभी टूल्स (3×3 ग्रिड)", "All Utility Tools"),
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = textSecondary,
-                    modifier = Modifier.padding(top = 6.dp, start = 2.dp, bottom = 2.dp)
-                )
-            }
-
-            // 3x3 Grid Tool Cards
+            // 3x3 Grid Tool Cards (Photo & Camera banner removed completely)
             items(quickTools) { tool ->
                 Surface(
                     shape = RoundedCornerShape(14.dp),
@@ -254,12 +173,12 @@ fun PhotoToolHomeScreen(
                         .clickable { onToolClick(tool.id) }
                 ) {
                     Column(
-                        modifier = Modifier.padding(vertical = 12.dp, horizontal = 6.dp),
+                        modifier = Modifier.padding(vertical = 14.dp, horizontal = 6.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(36.dp)
+                                .size(38.dp)
                                 .clip(CircleShape)
                                 .background(tool.accentColor.copy(alpha = 0.16f)),
                             contentAlignment = Alignment.Center
@@ -268,10 +187,10 @@ fun PhotoToolHomeScreen(
                                 imageVector = tool.icon,
                                 contentDescription = tool.titleHindi,
                                 tint = tool.accentColor,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(22.dp)
                             )
                         }
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         Text(
                             text = if (AppState.isHindi) tool.titleHindi else tool.titleEnglish,
                             fontSize = 12.sp,
