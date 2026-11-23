@@ -10,6 +10,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -18,7 +19,6 @@ import androidx.navigation.compose.rememberNavController
 import com.rvbhati.phototool.engine.BitmapUtils
 import com.rvbhati.phototool.ui.navigation.PhotoToolNavHost
 import com.rvbhati.phototool.ui.navigation.Screen
-import com.rvbhati.phototool.ui.theme.OledBlack
 import com.rvbhati.phototool.ui.theme.PhotoToolTheme
 import java.io.File
 
@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
             PhotoToolTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = OledBlack
+                    color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
 
@@ -41,7 +41,6 @@ class MainActivity : ComponentActivity() {
                         contract = ActivityResultContracts.GetContent()
                     ) { uri: Uri? ->
                         if (uri != null) {
-                            // By default opens crop/resize studio
                             navController.navigate(Screen.CropResize.route)
                         }
                     }
@@ -98,7 +97,6 @@ class MainActivity : ComponentActivity() {
         val type = intent.type
 
         if ((Intent.ACTION_SEND == action || Intent.ACTION_SEND_MULTIPLE == action) && type?.startsWith("image/") == true) {
-            // Direct to CropResize or KB Compress screen when image shared
             onNavigate(Screen.CropResize.route)
         }
     }

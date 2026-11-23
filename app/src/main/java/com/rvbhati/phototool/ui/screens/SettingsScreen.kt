@@ -22,16 +22,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.rvbhati.phototool.AppState
 import com.rvbhati.phototool.engine.BitmapUtils
 import com.rvbhati.phototool.engine.InAppUpdateEngine
 import com.rvbhati.phototool.engine.UpdateInfo
-import com.rvbhati.phototool.ui.theme.*
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -49,6 +48,15 @@ fun SettingsScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
+    val isDark = AppState.isDarkMode
+    val isHi = AppState.isHindi
+
+    val bgColor = if (isDark) Color(0xFF000000) else Color(0xFFF1F5F9)
+    val cardColor = if (isDark) Color(0xFF121418) else Color(0xFFFFFFFF)
+    val borderColor = if (isDark) Color(0x26FFFFFF) else Color(0x1F000000)
+    val textPrimary = if (isDark) Color.White else Color(0xFF0F172A)
+    val textSecondary = if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B)
+
     var showOtherApps by remember { mutableStateOf(false) }
     var isCheckingUpdate by remember { mutableStateOf(false) }
     var isDownloadingUpdate by remember { mutableStateOf(false) }
@@ -60,73 +68,98 @@ fun SettingsScreen(
     val otherApps = listOf(
         OtherDeveloperApp(
             name = "RV Bhati Player",
-            description = "शक्तिशाली मीडिया प्लेयर व ऑडियो-वीडियो प्लेयर",
+            description = if (isHi) "शक्तिशाली मीडिया प्लेयर व ऑडियो-वीडियो प्लेयर" else "Powerful media and video/audio player",
             githubUrl = "https://github.com/revantram/rv-bhati-player"
         ),
         OtherDeveloperApp(
-            name = "मेरी तैयारी (Meri Taiyari)",
-            description = "प्रतियोगी परीक्षा MCQ टेस्ट व अध्ययन ऐप",
+            name = if (isHi) "मेरी तैयारी (Meri Taiyari)" else "Meri Taiyari Exam Prep",
+            description = if (isHi) "प्रतियोगी परीक्षा MCQ टेस्ट व अध्ययन ऐप" else "Competitive exam preparation and MCQ quiz app",
             githubUrl = "https://github.com/revantram/meri-taiyari-mcq-prep"
         ),
         OtherDeveloperApp(
-            name = "युवा शक्ति ऐप (Yuva Shakti App)",
-            description = "भाटी परिवार कुचेरा आधिकारिक कम्युनिटी ऐप",
+            name = if (isHi) "युवा शक्ति ऐप (Yuva Shakti App)" else "Yuva Shakti App",
+            description = if (isHi) "भाटी परिवार कुचेरा आधिकारिक कम्युनिटी ऐप" else "Bhati Parivar Kuchera official community app",
             githubUrl = "https://github.com/revantram/yuva-shakti-app"
         ),
         OtherDeveloperApp(
-            name = "हाजिरी ऐप (Hajiri App)",
-            description = "iOS Liquid Glass UI • मोबाइल लॉगिन • सैलरी कैलकुलेटर",
+            name = if (isHi) "हाजिरी ऐप (Hajiri App)" else "Hajiri Attendance App",
+            description = if (isHi) "iOS Liquid Glass UI • मोबाइल लॉगिन • सैलरी कैलकुलेटर" else "iOS Liquid Glass UI • Mobile Login • Salary Calculator",
             githubUrl = "https://github.com/revantram/hajiri-app"
         ),
         OtherDeveloperApp(
             name = "TV Launcher",
-            description = "Android TV व Fire TV Stick कस्टम लॉन्चर",
+            description = if (isHi) "Android TV व Fire TV Stick कस्टम लॉन्चर" else "Android TV & Fire TV Stick custom launcher",
             githubUrl = "https://github.com/revantram/TV-launcher"
         ),
         OtherDeveloperApp(
-            name = "उत्कर्ष MCQ (Utkarsh MCQ)",
-            description = "MCQ क्विज़ व प्रश्नोत्तरी अभ्यास ऐप",
+            name = if (isHi) "उत्कर्ष MCQ (Utkarsh MCQ)" else "Utkarsh MCQ App",
+            description = if (isHi) "MCQ क्विज़ व प्रश्नोत्तरी अभ्यास ऐप" else "MCQ quiz & mock test practice app",
             githubUrl = "https://github.com/revantram/Utkarsh-"
         )
     )
 
     Scaffold(
-        containerColor = OledBlack,
+        containerColor = bgColor,
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = OledBlack,
-                    titleContentColor = Color.White
+                    containerColor = bgColor.copy(alpha = 0.92f),
+                    titleContentColor = textPrimary
                 ),
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back", tint = Color.White)
+                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back", tint = textPrimary)
                     }
                 },
                 title = {
                     Column {
                         Text(
-                            text = "युवा शक्ति ग्रुप",
+                            text = if (isHi) "युवा शक्ति ग्रुप" else "Yuva Shakti Group",
                             fontSize = 17.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            color = textPrimary
                         )
                         Text(
-                            text = "भाटी परिवार कुचेरा (रेवंतराम भाटी)",
+                            text = if (isHi) "भाटी परिवार कुचेरा (रेवंतराम भाटी)" else "Bhati Parivar Kuchera (Revant Ram Bhati)",
                             fontSize = 11.sp,
-                            color = Color(0xFF94A3B8)
+                            color = textSecondary
                         )
                     }
                 },
                 actions = {
-                    IconButton(onClick = { InAppUpdateEngine.shareAppApk(context) }) {
-                        Icon(Icons.Rounded.Share, contentDescription = "Share", tint = Color.White)
+                    // Small circular Day / Night theme toggle button
+                    Box(
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(CircleShape)
+                            .background(if (isDark) Color(0xFF1E293B) else Color(0xFFE2E8F0))
+                            .border(1.dp, borderColor, CircleShape)
+                            .clickable {
+                                AppState.isDarkMode = !AppState.isDarkMode
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = if (isDark) Icons.Rounded.LightMode else Icons.Rounded.DarkMode,
+                            contentDescription = "Day / Night Theme",
+                            tint = if (isDark) Color(0xFFFACC15) else Color(0xFF334155),
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
+
+                    Spacer(modifier = Modifier.width(6.dp))
+
+                    // Share APK button
+                    IconButton(onClick = { InAppUpdateEngine.shareAppApk(context) }) {
+                        Icon(Icons.Rounded.Share, contentDescription = "Share", tint = textPrimary)
+                    }
+
+                    // Bell / Notification icon with badge 3
                     Box(modifier = Modifier.padding(end = 6.dp)) {
                         IconButton(onClick = {
-                            Toast.makeText(context, "सभी सिस्टम और ऑफलाइन इंजन सक्रिय हैं", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, if (isHi) "सभी सिस्टम और ऑफलाइन इंजन सक्रिय हैं" else "All offline engines are active", Toast.LENGTH_SHORT).show()
                         }) {
-                            Icon(Icons.Rounded.Notifications, contentDescription = "Notification", tint = Color.White)
+                            Icon(Icons.Rounded.Notifications, contentDescription = "Notification", tint = textPrimary)
                         }
                         Box(
                             modifier = Modifier
@@ -155,12 +188,11 @@ fun SettingsScreen(
             // 1. डेवलपर ऑप्शन एवं अपडेट Card
             Surface(
                 shape = RoundedCornerShape(20.dp),
-                color = DarkSurface,
-                border = BorderStroke(1.dp, DarkBorder),
+                color = cardColor,
+                border = BorderStroke(1.dp, borderColor),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    // Header Row
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -178,31 +210,31 @@ fun SettingsScreen(
                             }
                             Spacer(modifier = Modifier.width(10.dp))
                             Text(
-                                text = "डेवलपर ऑप्शन एवं अपडेट",
+                                text = if (isHi) "डेवलपर ऑप्शन एवं अपडेट" else "Developer Options & Updates",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = textPrimary
                             )
                         }
 
                         // Version badge on top right
                         Surface(
                             shape = RoundedCornerShape(20.dp),
-                            color = Color(0xFF0F172A),
+                            color = if (isDark) Color(0xFF0F172A) else Color(0xFFEFF6FF),
                             border = BorderStroke(1.dp, Color(0xFF38BDF8).copy(alpha = 0.5f))
                         ) {
                             Text(
                                 text = "APK ${InAppUpdateEngine.CURRENT_VERSION}",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF38BDF8),
+                                color = Color(0xFF2563EB),
                                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
                             )
                         }
                     }
 
                     Spacer(modifier = Modifier.height(14.dp))
-                    HorizontalDivider(color = Color(0x1AFFFFFF))
+                    HorizontalDivider(color = borderColor)
                     Spacer(modifier = Modifier.height(14.dp))
 
                     // Developer Name
@@ -211,8 +243,8 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("मुख्य डेवलपर व संचालक:", color = Color(0xFF94A3B8), fontSize = 13.sp)
-                        Text("रेवंतराम भाटी", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Text(if (isHi) "मुख्य डेवलपर व संचालक:" else "Lead Developer:", color = textSecondary, fontSize = 13.sp)
+                        Text("रेवंतराम भाटी", color = textPrimary, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))
@@ -230,7 +262,7 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("डेवलपर ईमेल (Gmail):", color = Color(0xFF94A3B8), fontSize = 13.sp)
+                        Text(if (isHi) "डेवलपर ईमेल (Gmail):" else "Developer Email:", color = textSecondary, fontSize = 13.sp)
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(Icons.Rounded.Mail, contentDescription = null, tint = Color(0xFF38BDF8), modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
@@ -256,7 +288,7 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("डेवलपर मोबाइल नंबर:", color = Color(0xFF94A3B8), fontSize = 13.sp)
+                        Text(if (isHi) "डेवलपर मोबाइल नंबर:" else "Developer Mobile:", color = textSecondary, fontSize = 13.sp)
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(Icons.Rounded.Phone, contentDescription = null, tint = Color(0xFF4ADE80), modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
@@ -271,13 +303,13 @@ fun SettingsScreen(
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    // APK Version Pill (Without build code as explicitly requested)
+                    // APK Version Pill (pure version, build number removed)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("एपीके संस्करण (APK Version):", color = Color(0xFF94A3B8), fontSize = 13.sp)
+                        Text(if (isHi) "एपीके संस्करण:" else "APK Version:", color = textSecondary, fontSize = 13.sp)
                         Surface(
                             shape = RoundedCornerShape(12.dp),
                             color = Color(0xFF1E3A8A)
@@ -300,7 +332,7 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("क्लाउड / इंजन:", color = Color(0xFF94A3B8), fontSize = 13.sp)
+                        Text(if (isHi) "सिस्टम इंजन:" else "System Engine:", color = textSecondary, fontSize = 13.sp)
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Box(
                                 modifier = Modifier
@@ -310,7 +342,7 @@ fun SettingsScreen(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                "100% सुरक्षित एवं ऑफलाइन सक्रिय",
+                                if (isHi) "100% सुरक्षित एवं ऑफलाइन सक्रिय" else "100% Secure & Offline Active",
                                 color = Color(0xFF22C55E),
                                 fontWeight = FontWeight.Medium,
                                 fontSize = 12.sp
@@ -329,7 +361,6 @@ fun SettingsScreen(
                                 updateInfo = info
                                 isCheckingUpdate = false
 
-                                // Automatically start download if URL exists
                                 if (info.downloadUrl != null) {
                                     isDownloadingUpdate = true
                                     val apk = InAppUpdateEngine.downloadApkFile(context, info.downloadUrl) { progress ->
@@ -339,10 +370,9 @@ fun SettingsScreen(
                                     downloadedApkFile = apk
 
                                     if (apk != null) {
-                                        Toast.makeText(context, "अपडेट डाउनलोड हो गया! इंस्टॉल शुरू हो रहा है...", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, if (isHi) "अपडेट डाउनलोड हो गया! इंस्टॉल शुरू हो रहा है..." else "Update downloaded! Starting install...", Toast.LENGTH_SHORT).show()
                                         InAppUpdateEngine.installApk(context, apk)
                                     } else {
-                                        Toast.makeText(context, "सीधा डाउनलोड लिंक खोला जा रहा है...", Toast.LENGTH_SHORT).show()
                                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(info.downloadUrl))
                                         context.startActivity(intent)
                                     }
@@ -359,15 +389,15 @@ fun SettingsScreen(
                         if (isCheckingUpdate) {
                             CircularProgressIndicator(modifier = Modifier.size(22.dp), color = Color.White)
                             Spacer(modifier = Modifier.width(10.dp))
-                            Text("अपडेट की जांच हो रही है...")
+                            Text(if (isHi) "अपडेट की जांच हो रही है..." else "Checking for updates...")
                         } else if (isDownloadingUpdate) {
                             CircularProgressIndicator(modifier = Modifier.size(22.dp), color = Color.White)
                             Spacer(modifier = Modifier.width(10.dp))
-                            Text("डाउनलोड हो रहा है: ${(downloadProgress * 100).toInt()}%")
+                            Text(if (isHi) "डाउनलोड हो रहा है: ${(downloadProgress * 100).toInt()}%" else "Downloading: ${(downloadProgress * 100).toInt()}%")
                         } else {
                             Icon(Icons.Rounded.Sync, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("अपडेट की जांच करें (Check for Updates)", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                            Text(if (isHi) "अपडेट की जांच करें (Check for Updates)" else "Check for Updates", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                         }
                     }
 
@@ -388,9 +418,9 @@ fun SettingsScreen(
                             shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF22C55E))
                         ) {
-                            Icon(Icons.Rounded.DownloadDone, contentDescription = null, tint = OledBlack)
+                            Icon(Icons.Rounded.DownloadDone, contentDescription = null, tint = Color.Black)
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("1-क्लिक में अभी इंस्टॉल करें (Install APK)", color = OledBlack, fontWeight = FontWeight.Bold)
+                            Text(if (isHi) "1-क्लिक में अभी इंस्टॉल करें (Install APK)" else "Install APK Now (1-Click)", color = Color.Black, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -399,8 +429,8 @@ fun SettingsScreen(
             // 2. डेवलपर के और दूसरे एप्लीकेशन Card
             Surface(
                 shape = RoundedCornerShape(18.dp),
-                color = DarkSurface,
-                border = BorderStroke(1.dp, DarkBorder),
+                color = cardColor,
+                border = BorderStroke(1.dp, borderColor),
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { showOtherApps = !showOtherApps }
@@ -424,28 +454,28 @@ fun SettingsScreen(
                             Spacer(modifier = Modifier.width(12.dp))
                             Column {
                                 Text(
-                                    text = "डेवलपर के और दूसरे एप्लीकेशन",
+                                    text = if (isHi) "डेवलपर के और दूसरे एप्लीकेशन" else "Developer's Other Apps",
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color.White
+                                    color = textPrimary
                                 )
                                 Text(
-                                    text = "रेवंतराम भाटी के अन्य ऐप्स देखें व 1-क्लिक में इंस्टॉल करें",
+                                    text = if (isHi) "रेवंतराम भाटी के अन्य ऐप्स देखें व 1-क्लिक में इंस्टॉल करें" else "Explore other apps by Revant Ram Bhati",
                                     fontSize = 11.sp,
-                                    color = Color(0xFF94A3B8)
+                                    color = textSecondary
                                 )
                             }
                         }
 
                         Surface(
                             shape = RoundedCornerShape(14.dp),
-                            color = Color(0xFF1E293B)
+                            color = if (isDark) Color(0xFF1E293B) else Color(0xFFEFF6FF)
                         ) {
                             Text(
                                 text = "6+ ऐप्स >",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF60A5FA),
+                                color = Color(0xFF2563EB),
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                             )
                         }
@@ -459,8 +489,8 @@ fun SettingsScreen(
                             otherApps.forEach { app ->
                                 Surface(
                                     shape = RoundedCornerShape(14.dp),
-                                    color = Color(0xFF181C24),
-                                    border = BorderStroke(1.dp, Color(0x1AFFFFFF)),
+                                    color = if (isDark) Color(0xFF181C24) else Color(0xFFF8FAFC),
+                                    border = BorderStroke(1.dp, borderColor),
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
@@ -474,8 +504,8 @@ fun SettingsScreen(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Column(modifier = Modifier.weight(1f)) {
-                                            Text(app.name, fontWeight = FontWeight.Bold, color = Color.White, fontSize = 14.sp)
-                                            Text(app.description, color = Color(0xFF94A3B8), fontSize = 11.sp, modifier = Modifier.padding(top = 2.dp))
+                                            Text(app.name, fontWeight = FontWeight.Bold, color = textPrimary, fontSize = 14.sp)
+                                            Text(app.description, color = textSecondary, fontSize = 11.sp, modifier = Modifier.padding(top = 2.dp))
                                         }
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Rounded.OpenInNew,
@@ -491,15 +521,15 @@ fun SettingsScreen(
                 }
             }
 
-            // 3. एडमिन कंट्रोल (Admin Control)
+            // 3. एडमिन कंट्रोल
             Surface(
                 shape = RoundedCornerShape(18.dp),
-                color = DarkSurface,
-                border = BorderStroke(1.dp, DarkBorder),
+                color = cardColor,
+                border = BorderStroke(1.dp, borderColor),
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        Toast.makeText(context, "एडमिन मोड सक्रिय: रेवंतराम भाटी", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, if (isHi) "एडमिन मोड सक्रिय: रेवंतराम भाटी" else "Admin Mode Active: Revant Ram Bhati", Toast.LENGTH_SHORT).show()
                     }
             ) {
                 Row(
@@ -519,8 +549,8 @@ fun SettingsScreen(
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
-                            Text("एडमिन कंट्रोल (Admin Control)", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                            Text("एडमिन मोड सक्रिय • कंट्रोल सेंटर खोलें", fontSize = 11.sp, color = Color(0xFF94A3B8))
+                            Text(if (isHi) "एडमिन कंट्रोल" else "Admin Control", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                            Text(if (isHi) "एडमिन मोड सक्रिय • कंट्रोल सेंटर खोलें" else "Admin Mode Active • Control Center", fontSize = 11.sp, color = textSecondary)
                         }
                     }
 
@@ -529,7 +559,7 @@ fun SettingsScreen(
                         color = Color(0xFF14532D)
                     ) {
                         Text(
-                            text = "👑 सक्रिय (Active) >",
+                            text = if (isHi) "👑 सक्रिय >" else "👑 Active >",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF4ADE80),
@@ -539,11 +569,11 @@ fun SettingsScreen(
                 }
             }
 
-            // 4. ऐप शेयर करें (APK Send)
+            // 4. ऐप शेयर करें
             Surface(
                 shape = RoundedCornerShape(18.dp),
-                color = DarkSurface,
-                border = BorderStroke(1.dp, DarkBorder),
+                color = cardColor,
+                border = BorderStroke(1.dp, borderColor),
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { InAppUpdateEngine.shareAppApk(context) }
@@ -565,17 +595,17 @@ fun SettingsScreen(
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
-                            Text("ऐप शेयर करें (APK Send)", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                            Text("व्हाट्सएप पर सीधी ऐप (APK फाइल) भेजें", fontSize = 11.sp, color = Color(0xFF94A3B8))
+                            Text(if (isHi) "ऐप शेयर करें" else "Share App APK", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                            Text(if (isHi) "व्हाट्सएप पर सीधी ऐप (APK फाइल) भेजें" else "Share APK file directly on WhatsApp", fontSize = 11.sp, color = textSecondary)
                         }
                     }
 
                     Surface(
                         shape = RoundedCornerShape(14.dp),
-                        color = Color(0xFF431407)
+                        color = if (isDark) Color(0xFF431407) else Color(0xFFFFEDD5)
                     ) {
                         Text(
-                            text = "APK शेयर >",
+                            text = if (isHi) "APK शेयर >" else "Share APK >",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFFFB923C),
@@ -588,8 +618,8 @@ fun SettingsScreen(
             // 5. व्हाट्सएप ग्रुप
             Surface(
                 shape = RoundedCornerShape(18.dp),
-                color = DarkSurface,
-                border = BorderStroke(1.dp, DarkBorder),
+                color = cardColor,
+                border = BorderStroke(1.dp, borderColor),
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
@@ -614,8 +644,8 @@ fun SettingsScreen(
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
-                            Text("व्हाट्सएप ग्रुप", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                            Text("भाटी परिवार आधिकारिक ग्रुप से जुड़ें", fontSize = 11.sp, color = Color(0xFF94A3B8))
+                            Text(if (isHi) "व्हाट्सएप ग्रुप" else "WhatsApp Group", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                            Text(if (isHi) "भाटी परिवार आधिकारिक ग्रुप से जुड़ें" else "Join official Bhati Parivar group", fontSize = 11.sp, color = textSecondary)
                         }
                     }
 
@@ -624,7 +654,7 @@ fun SettingsScreen(
                         color = Color(0xFF14532D)
                     ) {
                         Text(
-                            text = "व्हाट्सएप >",
+                            text = if (isHi) "व्हाट्सएप >" else "WhatsApp >",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF4ADE80),
@@ -634,12 +664,21 @@ fun SettingsScreen(
                 }
             }
 
-            // 6. भाषा (Language)
+            // 6. भाषा चयन (Language Toggle)
             Surface(
                 shape = RoundedCornerShape(18.dp),
-                color = DarkSurface,
-                border = BorderStroke(1.dp, DarkBorder),
-                modifier = Modifier.fillMaxWidth()
+                color = cardColor,
+                border = BorderStroke(1.dp, borderColor),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        AppState.isHindi = !AppState.isHindi
+                        Toast.makeText(
+                            context,
+                            if (AppState.isHindi) "भाषा बदलकर हिन्दी कर दी गई है" else "Language switched to English",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
             ) {
                 Row(
                     modifier = Modifier.padding(16.dp),
@@ -658,75 +697,35 @@ fun SettingsScreen(
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
-                            Text("भाषा (Language)", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                            Text("सक्रिय भाषा: हिन्दी", fontSize = 11.sp, color = Color(0xFF94A3B8))
+                            Text(if (isHi) "भाषा चयन" else "Language Selection", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                            Text(
+                                if (isHi) "सक्रिय भाषा: हिन्दी (बदलने हेतु टैप करें)" else "Active: English (Tap to change)",
+                                fontSize = 11.sp,
+                                color = textSecondary
+                            )
                         }
                     }
 
                     Surface(
                         shape = RoundedCornerShape(14.dp),
-                        color = Color(0xFF1E293B)
+                        color = if (isDark) Color(0xFF1E293B) else Color(0xFFEFF6FF)
                     ) {
                         Text(
-                            text = "हिन्दी >",
+                            text = if (isHi) "हिन्दी >" else "English >",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF38BDF8),
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            color = Color(0xFF2563EB),
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
                         )
                     }
                 }
             }
 
-            // 7. ऐप थीम (रंग-रूप)
+            // 7. Cache & Storage Cleaner
             Surface(
                 shape = RoundedCornerShape(18.dp),
-                color = DarkSurface,
-                border = BorderStroke(1.dp, DarkBorder),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(38.dp)
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(Color(0xFFE11D48).copy(alpha = 0.2f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(Icons.Rounded.Palette, contentDescription = null, tint = Color(0xFFFB7185), modifier = Modifier.size(20.dp))
-                        }
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column {
-                            Text("ऐप थीम (रंग-रूप)", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                            Text("क्लासिक सफेद व साफ रूप / डार्क मोड", fontSize = 11.sp, color = Color(0xFF94A3B8))
-                        }
-                    }
-
-                    Surface(
-                        shape = RoundedCornerShape(14.dp),
-                        color = Color(0xFF4C0519)
-                    ) {
-                        Text(
-                            text = "OLED डार्क >",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFFFB7185),
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                        )
-                    }
-                }
-            }
-
-            // 8. Cache & Storage Cleaner
-            Surface(
-                shape = RoundedCornerShape(18.dp),
-                color = DarkSurface,
-                border = BorderStroke(1.dp, DarkBorder),
+                color = cardColor,
+                border = BorderStroke(1.dp, borderColor),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
@@ -742,8 +741,8 @@ fun SettingsScreen(
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
-                            Text("कैश व स्टोरेज क्लीनर", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                            Text("अस्थायी फाइलें साफ कर फोन स्पेस खाली करें", fontSize = 11.sp, color = Color(0xFF94A3B8))
+                            Text(if (isHi) "कैश व स्टोरेज क्लीनर" else "Cache & Storage Cleaner", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = textPrimary)
+                            Text(if (isHi) "अस्थायी फाइलें साफ कर फोन स्पेस खाली करें" else "Free device storage by cleaning temporary files", fontSize = 11.sp, color = textSecondary)
                         }
                     }
 
@@ -754,12 +753,16 @@ fun SettingsScreen(
                             val bytes = BitmapUtils.clearCache(context)
                             val mb = bytes / (1024.0 * 1024.0)
                             freedCacheMb = mb
-                            Toast.makeText(context, "सफलतापूर्वक ${"%.2f".format(mb)} MB कैश साफ किया गया!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                if (isHi) "सफलतापूर्वक ${"%.2f".format(mb)} MB कैश साफ किया गया!" else "Successfully cleaned ${"%.2f".format(mb)} MB cache!",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF10B981)),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text("कैश साफ करें (Clean Cache)", color = OledBlack, fontWeight = FontWeight.Bold)
+                        Text(if (isHi) "कैश साफ करें (Clean Cache)" else "Clean Cache Now", color = Color.Black, fontWeight = FontWeight.Bold)
                     }
 
                     freedCacheMb?.let { mb ->
