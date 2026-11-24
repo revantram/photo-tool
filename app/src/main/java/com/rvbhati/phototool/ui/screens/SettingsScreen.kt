@@ -111,26 +111,6 @@ fun SettingsScreen(
                     IconButton(onClick = { InAppUpdateEngine.shareAppApk(context) }) {
                         Icon(Icons.Rounded.Share, contentDescription = "Share", tint = textPrimary)
                     }
-
-                    // Bell / Notification icon with badge 3
-                    Box(modifier = Modifier.padding(end = 6.dp)) {
-                        IconButton(onClick = {
-                            Toast.makeText(context, if (isHi) "सभी सिस्टम और ऑफलाइन इंजन सक्रिय हैं" else "All offline engines are active", Toast.LENGTH_SHORT).show()
-                        }) {
-                            Icon(Icons.Rounded.Notifications, contentDescription = "Notification", tint = textPrimary)
-                        }
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.TopEnd)
-                                .offset(x = (-4).dp, y = 6.dp)
-                                .size(18.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFFEF4444)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("3", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                        }
-                    }
                 }
             )
         }
@@ -278,32 +258,6 @@ fun SettingsScreen(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 13.sp,
                                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp)
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    // Status
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(if (isHi) "सिस्टम इंजन:" else "System Engine:", color = textSecondary, fontSize = 13.sp)
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier
-                                    .size(8.dp)
-                                    .clip(CircleShape)
-                                    .background(Color(0xFF22C55E))
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                if (isHi) "100% सुरक्षित एवं ऑफलाइन सक्रिय" else "100% Secure & Offline Active",
-                                color = Color(0xFF22C55E),
-                                fontWeight = FontWeight.Medium,
-                                fontSize = 12.sp
                             )
                         }
                     }
